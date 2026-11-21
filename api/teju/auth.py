@@ -19,7 +19,9 @@ COOKIE = "teju_session"
 SESSION_DAYS = 30
 _ph = PasswordHasher()
 _DUMMY_HASH = _ph.hash("timing-equaliser")
-_failures: dict[str, list[float]] = {}  # shortcut: in-memory login throttle, per process; move to Redis/DB for multi-instance
+# shortcut: in-memory throttle keyed on (email, client IP), per process; move to Redis/DB for multi-instance.
+# Keying on IP too means an attacker elsewhere can't lock a real user out of their own account.
+_failures: dict[str, list[float]] = {}
 MAX_FAILURES, WINDOW_S = 5, 15 * 60
 
 
@@ -63,7 +65,7 @@ def create_session(conn: sqlite3.Connection, user_id: int, kind: str = "web") ->
 
 def set_cookie(response: Response, token: str) -> None:
     response.set_cookie(COOKIE, token, max_age=SESSION_DAYS * 86400, httponly=True, samesite="lax",
-                        secure=os.environ.get("TEJU_COOKIE_SECURE", "0") == "1", path="/")
+                        secure=os.environ.get("TEJU_COOKIE_INSECURE", "0") != "1", path="/")  # http dev only: TEJU_COOKIE_INSECURE=1
 
 
 def end_session(conn: sqlite3.Connection, token: str | None) -> None:

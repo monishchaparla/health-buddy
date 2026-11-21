@@ -4,6 +4,7 @@ import pytest
 
 # Tests never call Gemini: an empty key wins over api/.env (load_dotenv doesn't override), so parsing uses rules.
 os.environ["GEMINI_API_KEY"] = ""
+os.environ["TEJU_COOKIE_INSECURE"] = "1"  # TestClient talks plain http
 
 
 @pytest.fixture(autouse=True, scope="session")

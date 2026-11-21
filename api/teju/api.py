@@ -211,29 +211,30 @@ def signup(body: SignupIn, response: Response, conn: sqlite3.Connection = Depend
     return user_out(conn.execute("SELECT * FROM users WHERE id = ?", (cur.lastrowid,)).fetchone())
 
 
-def _check_login(conn: sqlite3.Connection, body: LoginIn) -> sqlite3.Row:
+def _check_login(conn: sqlite3.Connection, body: LoginIn, request: Request) -> sqlite3.Row:
     email = body.email.lower()
-    if auth.throttled(email):
+    key = f"{email}|{request.client.host if request.client else '-'}"
+    if auth.throttled(key):
         raise HTTPException(429, "Too many failed attempts. Wait 15 minutes and try again.")
     user = conn.execute("SELECT * FROM users WHERE email = ?", (email,)).fetchone()
     if not auth.verify_password(user["pw_hash"] if user else None, body.password):
-        auth.record_failure(email)
+        auth.record_failure(key)
         raise HTTPException(401, "Email or password is wrong.")
-    auth.clear_failures(email)
+    auth.clear_failures(key)
     return user
 
 
 @app.post("/auth/login")
-def login(body: LoginIn, response: Response, conn: sqlite3.Connection = Depends(get_conn)):
-    user = _check_login(conn, body)
+def login(body: LoginIn, request: Request, response: Response, conn: sqlite3.Connection = Depends(get_conn)):
+    user = _check_login(conn, body, request)
     auth.set_cookie(response, auth.create_session(conn, user["id"]))
     return user_out(user)
 
 
 @app.post("/auth/token")
-def app_token(body: LoginIn, conn: sqlite3.Connection = Depends(get_conn)):
+def app_token(body: LoginIn, request: Request, conn: sqlite3.Connection = Depends(get_conn)):
     """Bearer token for the Android companion, which can't share the browser's cookie."""
-    user = _check_login(conn, body)
+    user = _check_login(conn, body, request)
     return {"token": auth.create_session(conn, user["id"], kind="app"), "user": user_out(user)}
 
 

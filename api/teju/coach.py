@@ -74,8 +74,9 @@ def weekly_stats(conn: sqlite3.Connection, member: dict, end: date) -> dict:
         (member["id"], start.isoformat(), end.isoformat()),
     ).fetchall()
     top = conn.execute(
-        """SELECT i.name, COUNT(*) n FROM meals m JOIN meal_items i ON i.meal_id = m.id
-           WHERE m.member_id = ? AND m.eaten_on BETWEEN ? AND ? GROUP BY i.name ORDER BY n DESC LIMIT 6""",
+        # Packaged-food names come from Open Food Facts (third-party text), so they never reach the prompt.
+        """SELECT CASE WHEN i.food_id LIKE 'off:%' THEN 'packaged food' ELSE i.name END name, COUNT(*) n FROM meals m JOIN meal_items i ON i.meal_id = m.id
+           WHERE m.member_id = ? AND m.eaten_on BETWEEN ? AND ? GROUP BY 1 ORDER BY n DESC LIMIT 6""",
         (member["id"], start.isoformat(), end.isoformat()),
     ).fetchall()
     health = {r["type"]: r["v"] for r in conn.execute(
