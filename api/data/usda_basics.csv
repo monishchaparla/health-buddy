@@ -1,0 +1,34 @@
+key,fdc_id,description,kcal,protein,carbs,fat,fibre,unit,unit_g,usda_portion
+banana,173944,"Bananas, raw",89.0,1.09,22.84,0.33,2.6,piece,118.0,"medium (7"" to 7-7/8"" long)"
+apple,171688,"Apples, raw, with skin (Includes foods for USDA's Food Distribution Program)",52.0,0.26,13.81,0.17,2.4,piece,182.0,"medium (3"" dia)"
+mango,169910,"Mangos, raw",60.0,0.82,14.98,0.38,1.6,cup,165.0,cup pieces
+guava,173044,"Guavas, common, raw",68.0,2.55,14.32,0.95,5.4,piece,55.0,"fruit, without refuse"
+papaya,169926,"Papayas, raw",43.0,0.47,10.82,0.26,1.7,cup,145.0,"cup 1"" pieces"
+orange,169097,"Oranges, raw, all commercial varieties",47.0,0.94,11.75,0.12,2.4,piece,131.0,"fruit (2-5/8"" dia)"
+watermelon,167765,"Watermelon, raw",30.0,0.61,7.55,0.15,0.4,wedge,286.0,wedge (approx 1/16 of melon)
+pomegranate,169134,"Pomegranates, raw",83.0,1.67,18.7,1.17,4.0,cup,174.0,cup arils (seed/juice sacs)
+grapes,174683,"Grapes, red or green (European type, such as Thompson seedless), raw",69.0,0.72,18.1,0.16,0.9,cup,151.0,cup
+sapota,167759,"Sapodilla, raw",83.0,0.44,19.96,1.1,5.3,piece,170.0,sapodilla
+dates,168191,"Dates, medjool",277.0,1.81,74.97,0.15,6.7,piece,24.0,"date, pitted"
+milk,171265,"Milk, whole, 3.25% milkfat, with added vitamin D",61.0,3.15,4.8,3.25,0.0,cup,244.0,cup
+curd,171284,"Yogurt, plain, whole milk",61.0,3.47,4.66,3.25,0.0,cup,245.0,cup (8 fl oz)
+buttermilk_cultured,170874,"Milk, buttermilk, fluid, cultured, lowfat",40.0,3.31,4.79,1.07,0.0,cup,245.0,cup
+ghee,173412,"Butter oil, anhydrous",876.0,0.28,0.0,99.48,0.0,tbsp,12.8,tbsp
+butter,173430,"Butter, without salt",717.0,0.85,0.06,81.11,0.0,tbsp,14.2,tbsp
+sugar,169655,"Sugars, granulated",387.0,0.0,99.98,0.0,0.0,tsp,4.2,tsp
+honey,169640,Honey,304.0,0.3,82.4,0.0,0.2,tbsp,21.0,tbsp
+peanuts,173806,"Peanuts, all types, dry-roasted, without salt",587.0,24.35,21.26,49.66,8.4,handful,28.4,oz
+almonds,170567,"Nuts, almonds",579.0,21.15,21.55,49.93,12.5,handful,28.4,oz (23 whole kernels)
+cashews,170162,"Nuts, cashew nuts, raw",553.0,18.22,30.19,43.85,3.3,handful,28.4,oz
+cucumber,168409,"Cucumber, with peel, raw",15.0,0.65,3.63,0.11,0.5,cup,104.0,cup slices
+tomato,170457,"Tomatoes, red, ripe, raw, year round average",18.0,0.88,3.89,0.2,1.2,piece,123.0,"medium whole (2-3/5"" dia)"
+onion,170000,"Onions, raw",40.0,1.1,9.34,0.1,1.7,piece,110.0,"medium (2-1/2"" dia)"
+carrot,170393,"Carrots, raw",41.0,0.93,9.58,0.24,2.8,piece,61.0,medium
+white_bread,174924,"Bread, white, commercially prepared (includes soft bread crumbs)",266.0,8.85,49.42,3.33,2.7,slice,29.0,slice
+brown_bread,172688,"Bread, whole-wheat, commercially prepared",252.0,12.45,42.71,3.5,6.0,slice,32.0,slice
+oats,173904,"Cereals, oats, regular and quick, not fortified, dry",379.0,13.15,67.7,6.52,10.1,cup,81.0,cup
+coconut_water,170174,"Nuts, coconut water (liquid from coconuts)",19.0,0.72,3.71,0.2,1.1,cup,240.0,cup
+chicken_breast,171477,"Chicken, broilers or fryers, breast, meat only, cooked, roasted",165.0,31.02,0.0,3.57,0.0,piece,172.0,"breast, bone and skin removed"
+white_rice_cooked,168878,"Rice, white, long-grain, regular, enriched, cooked",130.0,2.69,28.17,0.28,0.4,cup,158.0,cup
+black_tea,173227,"Beverages, tea, black, brewed, prepared with tap water",1.0,0.0,0.3,0.0,0.0,cup,237.0,cup (8 fl oz)
+black_coffee,171890,"Beverages, coffee, brewed, prepared with tap water",1.0,0.12,0.0,0.02,0.0,cup,237.0,cup (8 fl oz)
