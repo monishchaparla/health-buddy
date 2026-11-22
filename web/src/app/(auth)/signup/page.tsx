@@ -43,7 +43,7 @@ export default function SignupPage() {
           <input id="name" name="name" autoComplete="name" required maxLength={60} className="field" />
         </Field>
         <Field id="email" label={t("auth.email")}>
-          <input id="email" name="email" type="email" autoComplete="email" required className="field" />
+          <input id="email" name="email" type="email" autoComplete="email" spellCheck={false} required className="field" />
         </Field>
         <Field id="password" label={t("auth.password")} hint={t("auth.passwordHint")}>
           <input id="password" name="password" type="password" autoComplete="new-password" required minLength={8}

@@ -93,6 +93,25 @@ html[lang="te"] body {
   line-height: 1.6;
 }
 
+html {
+  scroll-padding-bottom: 88px; /* keep focused fields clear of the fixed bottom nav */
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
 .num {
   font-variant-numeric: tabular-nums;
 }
@@ -141,6 +160,15 @@ textarea.field {
 .btn-primary {
   background: var(--indigo);
   color: var(--on-indigo);
+}
+.btn-primary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--indigo) 88%, var(--ink));
+}
+.btn-secondary:hover:not(:disabled) {
+  border-color: var(--ink-2);
+}
+.btn-danger:hover:not(:disabled) {
+  background: var(--canvas);
 }
 .btn-secondary {
   background: var(--surface);

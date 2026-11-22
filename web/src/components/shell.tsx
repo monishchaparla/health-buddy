@@ -81,10 +81,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="mx-auto flex min-h-dvh max-w-[640px] flex-col">
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-2 focus:z-50 focus:rounded-[10px] focus:bg-surface focus:px-3 focus:py-2">
-        Skip to content
+        {t("nav.skip")}
       </a>
       <header className="flex items-center justify-between px-4 pt-3">
-        <Link href="/" className="text-[20px] font-semibold tracking-tight">{t("app.name")}</Link>
+        <Link href="/" translate="no" className="text-[20px] font-semibold tracking-tight">{t("app.name")}</Link>
         <div className="flex items-center">
           <LangToggle />
           <ThemeToggle />
@@ -121,11 +121,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 export function MemberPicker({ label }: { label: string }) {
   const { members, memberId, setMemberId } = useApp();
   return (
-    <div role="radiogroup" aria-label={label} className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
+    <div role="group" aria-label={label} className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
       {members.map((m) => (
-        <button key={m.id} type="button" role="radio" aria-checked={m.id === memberId} onClick={() => setMemberId(m.id)}
+        <button key={m.id} type="button" aria-pressed={m.id === memberId} onClick={() => setMemberId(m.id)}
           className={`flex min-h-11 shrink-0 items-center gap-2 rounded-full border pl-1.5 pr-4 text-[15px] font-medium ${
-            m.id === memberId ? "border-indigo bg-indigo-wash text-indigo" : "border-rule bg-surface text-ink"}`}>
+            m.id === memberId ? "border-indigo bg-indigo-wash text-indigo" : "border-rule bg-surface text-ink hover:border-ink-2"}`}>
           <span aria-hidden="true" className="grid h-8 w-8 place-items-center rounded-full bg-canvas text-[14px] font-semibold text-ink">
             {m.name.slice(0, 1).toUpperCase()}
           </span>

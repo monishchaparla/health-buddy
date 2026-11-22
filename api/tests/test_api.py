@@ -238,4 +238,7 @@ def test_rotating_ips_still_hit_the_per_email_cap():
     assert not auth.throttled("asha@example.com", "203.0.113.99")  # each IP below 5, email below 20
     auth.record_failure("asha@example.com", "198.51.100.200")
     assert auth.throttled("asha@example.com", "203.0.113.99")  # 20 failures across IPs blocks new IPs too
+    auth.clear_failures("asha@example.com", "192.0.2.1")  # the owner signed in from here before
+    assert not auth.throttled("asha@example.com", "192.0.2.1")  # so the owner isn't locked out
     auth._failures.clear()
+    auth._known_ips.clear()

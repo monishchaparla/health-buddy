@@ -8,7 +8,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className="mx-auto flex min-h-dvh max-w-[440px] flex-col px-4">
       <header className="flex items-center justify-between pt-3">
-        <span className="text-[20px] font-semibold tracking-tight">{t("app.name")}</span>
+        <span translate="no" className="text-[20px] font-semibold tracking-tight">{t("app.name")}</span>
         <div className="flex items-center">
           <LangToggle />
           <ThemeToggle />

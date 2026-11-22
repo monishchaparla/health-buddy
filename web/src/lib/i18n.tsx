@@ -31,6 +31,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const saved = readPref("hb_lang");
     if (saved === "en" || saved === "te") setLangState(saved);
+    else if (navigator.languages?.some((l) => l.toLowerCase().startsWith("te"))) setLangState("te");
   }, []);
 
   useEffect(() => {

@@ -23,6 +23,7 @@ _DUMMY_HASH = _ph.hash("timing-equaliser")
 # Keying on IP too means an attacker elsewhere can't lock a real user out of their own account. The client IP
 # comes from X-Forwarded-For, which a client can rotate, so a looser per-email cap backs it up.
 _failures: dict[str, list[float]] = {}
+_known_ips: dict[str, set[str]] = {}  # IPs that signed in to this email before skip the per-email cap
 MAX_FAILURES, MAX_PER_EMAIL, WINDOW_S = 5, 20, 15 * 60
 
 
@@ -48,7 +49,9 @@ def _recent(key: str) -> int:
 
 
 def throttled(email: str, ip: str) -> bool:
-    return _recent(f"{email}|{ip}") >= MAX_FAILURES or _recent(email) >= MAX_PER_EMAIL
+    if _recent(f"{email}|{ip}") >= MAX_FAILURES:
+        return True
+    return ip not in _known_ips.get(email, set()) and _recent(email) >= MAX_PER_EMAIL
 
 
 def record_failure(email: str, ip: str) -> None:
@@ -57,7 +60,9 @@ def record_failure(email: str, ip: str) -> None:
 
 
 def clear_failures(email: str, ip: str) -> None:
+    """Called on a successful login."""
     _failures.pop(f"{email}|{ip}", None)
+    _known_ips.setdefault(email, set()).add(ip)
 
 
 def create_session(conn: sqlite3.Connection, user_id: int, kind: str = "web") -> str:

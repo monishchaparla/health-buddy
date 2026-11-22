@@ -55,6 +55,14 @@ export default function LogPage() {
   const [busy, setBusy] = useState(false);
   const member = members.find((m) => m.id === memberId);
 
+  // Warn before leaving with reviewed items that were never saved.
+  useEffect(() => {
+    if (entries.length === 0) return;
+    const warn = (e: BeforeUnloadEvent) => e.preventDefault();
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [entries.length]);
+
   const add = (items: Entry[]) => {
     setEntries((cur) => [...cur, ...items]);
     setSaved("");
@@ -214,7 +222,7 @@ function TypeTab({ text, setText, onItems }: { text: string; setText: (s: string
   return (
     <form onSubmit={read} className="flex flex-col gap-3">
       <Field id="meal-text" label={t("log.typeLabel")} hint={t("log.typeHint")}>
-        <textarea id="meal-text" className="field" maxLength={500} value={text} onChange={(e) => setText(e.target.value)} aria-describedby="meal-text-hint" />
+        <textarea id="meal-text" autoComplete="off" className="field" maxLength={500} value={text} onChange={(e) => setText(e.target.value)} aria-describedby="meal-text-hint" />
       </Field>
       <ErrorText>{error}</ErrorText>
       <button className="btn btn-secondary self-start" disabled={busy || !text.trim()}>{busy ? t("log.reading") : t("log.read")}</button>
@@ -256,7 +264,7 @@ function PhotoTab({ onItems }: { onItems: (o: ParseOut) => void }) {
           }} />
       </Field>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      {preview && <img src={preview} alt="" className="max-h-56 w-full rounded-[12px] object-cover" />}
+      {preview && <img src={preview} alt="" width={640} height={448} className="max-h-56 w-full rounded-[12px] object-cover" />}
       <ErrorText>{error}</ErrorText>
       <button type="button" className="btn btn-secondary self-start" disabled={!file || busy} onClick={read}>
         {busy ? t("log.reading") : t("log.photoRead")}
@@ -336,7 +344,7 @@ function BarcodeTab({ onFood }: { onFood: (f: Food, code: string) => void }) {
     <div className="flex flex-col gap-3">
       <form className="flex flex-col gap-3" onSubmit={(e) => { e.preventDefault(); lookup(code); }}>
         <Field id="barcode" label={t("log.barcodeLabel")} hint={t("log.barcodeHint")}>
-          <input id="barcode" inputMode="numeric" maxLength={14} className="field num" value={code}
+          <input id="barcode" inputMode="numeric" autoComplete="off" spellCheck={false} maxLength={14} className="field num" value={code}
             aria-describedby="barcode-hint" onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))} />
         </Field>
         <div className="flex flex-wrap gap-2">
@@ -372,7 +380,7 @@ function SearchTab({ onFood }: { onFood: (f: Food) => void }) {
   return (
     <div className="flex flex-col gap-3">
       <Field id="food-q" label={t("log.searchLabel")}>
-        <input id="food-q" type="search" className="field" placeholder={t("log.searchHint")} value={q} onChange={(e) => setQ(e.target.value)} />
+        <input id="food-q" type="search" autoComplete="off" className="field" placeholder={t("log.searchHint")} value={q} onChange={(e) => setQ(e.target.value)} />
       </Field>
       <ErrorText>{error}</ErrorText>
       <p role="status" className="sr-only">{added}</p>

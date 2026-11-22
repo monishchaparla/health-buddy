@@ -89,11 +89,11 @@ export function Segmented<V extends string>({ value, options, onChange, label }:
   value: V; options: { value: V; label: string }[]; onChange: (v: V) => void; label: string;
 }) {
   return (
-    <div role="radiogroup" aria-label={label} className="grid gap-1 rounded-[12px] border border-rule bg-surface p-1"
+    <div role="group" aria-label={label} className="grid gap-1 rounded-[12px] border border-rule bg-surface p-1"
       style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}>
       {options.map((o) => (
-        <button key={o.value} type="button" role="radio" aria-checked={value === o.value} onClick={() => onChange(o.value)}
-          className={`min-h-10 rounded-[9px] px-2 text-[15px] font-medium ${value === o.value ? "bg-indigo-wash text-indigo" : "text-ink-2"}`}>
+        <button key={o.value} type="button" aria-pressed={value === o.value} onClick={() => onChange(o.value)}
+          className={`min-h-10 rounded-[9px] px-2 text-[15px] font-medium ${value === o.value ? "bg-indigo-wash text-indigo" : "text-ink-2 hover:bg-canvas hover:text-ink"}`}>
           {o.label}
         </button>
       ))}

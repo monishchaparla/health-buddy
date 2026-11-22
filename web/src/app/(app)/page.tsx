@@ -262,7 +262,7 @@ function CoachPanel({ memberId, name }: { memberId: number; name: string }) {
             ))}
           </ul>
           <p className="text-[13px] text-ink-2">
-            {t("coach.basedOn", { days: coach.stats.days_logged, from: coach.stats.from, to: coach.stats.to })}{" "}
+            {t("coach.basedOn", { days: coach.stats.days_logged, from: shortDate(coach.stats.from, lang), to: shortDate(coach.stats.to, lang) })}{" "}
             {coach.engine === "gemini" ? t("coach.byAi", { name }) : coach.notice === "ai_rate_limited" ? t("coach.aiBusy") : t("coach.byRules")}
           </p>
           <button type="button" className="btn btn-secondary self-start" disabled={busy} onClick={() => load(true)}>
@@ -273,6 +273,9 @@ function CoachPanel({ memberId, name }: { memberId: number; name: string }) {
     </section>
   );
 }
+
+const shortDate = (iso: string, lang: string) =>
+  new Intl.DateTimeFormat(lang === "te" ? "te-IN" : "en-IN", { day: "numeric", month: "short" }).format(new Date(`${iso}T12:00:00`));
 
 function Chevron({ dir }: { dir: "left" | "right" }) {
   return (

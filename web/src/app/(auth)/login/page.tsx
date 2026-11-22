@@ -36,7 +36,7 @@ export default function LoginPage() {
       </div>
       <form onSubmit={submit} className="panel flex flex-col gap-4 p-5">
         <Field id="email" label={t("auth.email")}>
-          <input id="email" name="email" type="email" autoComplete="email" required className="field" />
+          <input id="email" name="email" type="email" autoComplete="email" spellCheck={false} required className="field" />
         </Field>
         <Field id="password" label={t("auth.password")}>
           <input id="password" name="password" type="password" autoComplete="current-password" required className="field" />
