@@ -1,0 +1,169 @@
+@import "tailwindcss";
+
+/* Tokens from DESIGN.md (steel thali). Light first, dark via system or data-theme. */
+:root {
+  --canvas: #edf0f3;
+  --surface: #ffffff;
+  --ink: #1a2333;
+  --ink-2: #4a5568;
+  --rule: #d5dbe2;
+  --indigo: #3d3a9e;
+  --on-indigo: #ffffff;
+  --indigo-wash: #e6e6f7;
+  --turmeric: #e2a400;
+  --turmeric-wash: #fbf0d2;
+  --turmeric-ink: #6b4b00;
+  --protein: #3d3a9e;
+  --carbs: #b98500;
+  --fat: #a8436b;
+  --kokum: #a8436b;
+  --dusk: #5b6b8c;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --canvas: #10141b;
+    --surface: #171c25;
+    --ink: #e6eaf0;
+    --ink-2: #a2acba;
+    --rule: #2a3242;
+    --indigo: #a9a7f2;
+    --on-indigo: #10141b;
+    --indigo-wash: #26254a;
+    --turmeric: #f2be3a;
+    --turmeric-wash: #3a2f12;
+    --turmeric-ink: #f6d98a;
+    --protein: #a9a7f2;
+    --carbs: #f2be3a;
+    --fat: #e28aae;
+    --kokum: #e28aae;
+    --dusk: #9aa9c9;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --canvas: #10141b;
+  --surface: #171c25;
+  --ink: #e6eaf0;
+  --ink-2: #a2acba;
+  --rule: #2a3242;
+  --indigo: #a9a7f2;
+  --on-indigo: #10141b;
+  --indigo-wash: #26254a;
+  --turmeric: #f2be3a;
+  --turmeric-wash: #3a2f12;
+  --turmeric-ink: #f6d98a;
+  --protein: #a9a7f2;
+  --carbs: #f2be3a;
+  --fat: #e28aae;
+  --kokum: #e28aae;
+  --dusk: #9aa9c9;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-rule: var(--rule);
+  --color-indigo: var(--indigo);
+  --color-on-indigo: var(--on-indigo);
+  --color-indigo-wash: var(--indigo-wash);
+  --color-turmeric: var(--turmeric);
+  --color-turmeric-wash: var(--turmeric-wash);
+  --color-turmeric-ink: var(--turmeric-ink);
+  --color-kokum: var(--kokum);
+  --color-dusk: var(--dusk);
+  --font-sans: var(--font-anek), system-ui, sans-serif;
+}
+
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-anek), system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+html[lang="te"] body {
+  line-height: 1.6;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+:focus-visible {
+  outline: 2px solid var(--indigo);
+  outline-offset: 2px;
+}
+
+.field {
+  height: 44px;
+  width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 0 12px;
+  font: inherit;
+  font-size: 16px;
+}
+.field::placeholder {
+  color: var(--ink-2);
+}
+textarea.field {
+  height: auto;
+  padding: 10px 12px;
+  min-height: 88px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 15px;
+  cursor: pointer;
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+.btn-primary {
+  background: var(--indigo);
+  color: var(--on-indigo);
+}
+.btn-secondary {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+}
+.btn-danger {
+  background: var(--surface);
+  color: var(--kokum);
+  border: 1px solid var(--kokum);
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+}
+
+.ring-fill {
+  transition: stroke-dashoffset 600ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ring-fill {
+    transition: none;
+  }
+}
