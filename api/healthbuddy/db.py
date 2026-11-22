@@ -6,7 +6,7 @@ import os
 import sqlite3
 from pathlib import Path
 
-DEFAULT_DB = Path(__file__).resolve().parents[1] / "data" / "teju.db"
+DEFAULT_DB = Path(__file__).resolve().parents[1] / "data" / "healthbuddy.db"
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS users (
@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS coach_cache (
 
 
 def path() -> Path:
-    return Path(os.environ.get("TEJU_DB", DEFAULT_DB))
+    return Path(os.environ.get("HEALTHBUDDY_DB", DEFAULT_DB))
 
 
 def connect() -> sqlite3.Connection:

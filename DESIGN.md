@@ -1,12 +1,12 @@
-# Teju Health AI: Design System
+# Health Buddy: Design System
 
 Format follows the awesome-design-md convention so humans and coding agents build the same product.
 
 ## Overview
 
-Teju is a nutrition coach for Indian families. One adult (usually the person who plans the
+Health Buddy is a nutrition coach for Indian families. One adult (usually the person who plans the
 household's meals) logs what each family member ate, by typing it in English or Telugu, taking a
-photo of the plate, scanning a packet's barcode or picking from a list. Teju turns that into
+photo of the plate, scanning a packet's barcode or picking from a list. Health Buddy turns that into
 calories, protein, carbs, fat and fibre, shows it next to steps and sleep from Health Connect, and
 writes a few careful suggestions each week.
 

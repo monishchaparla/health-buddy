@@ -13,9 +13,9 @@ from argon2 import PasswordHasher
 from argon2.exceptions import InvalidHashError, VerifyMismatchError
 from fastapi import Depends, HTTPException, Request, Response
 
-from teju.db import get_conn
+from healthbuddy.db import get_conn
 
-COOKIE = "teju_session"
+COOKIE = "healthbuddy_session"
 SESSION_DAYS = 30
 _ph = PasswordHasher()
 _DUMMY_HASH = _ph.hash("timing-equaliser")
@@ -65,7 +65,7 @@ def create_session(conn: sqlite3.Connection, user_id: int, kind: str = "web") ->
 
 def set_cookie(response: Response, token: str) -> None:
     response.set_cookie(COOKIE, token, max_age=SESSION_DAYS * 86400, httponly=True, samesite="lax",
-                        secure=os.environ.get("TEJU_COOKIE_INSECURE", "0") != "1", path="/")  # http dev only: TEJU_COOKIE_INSECURE=1
+                        secure=os.environ.get("HEALTHBUDDY_COOKIE_INSECURE", "0") != "1", path="/")  # http dev only: HEALTHBUDDY_COOKIE_INSECURE=1
 
 
 def end_session(conn: sqlite3.Connection, token: str | None) -> None:

@@ -10,7 +10,7 @@ import httpx
 
 URL = "https://world.openfoodfacts.org/api/v2/product/{code}.json"
 FIELDS = "product_name,brands,nutriments,serving_quantity,serving_size,quantity"
-HEADERS = {"User-Agent": "TejuHealthAI/0.1"}
+HEADERS = {"User-Agent": "HealthBuddy/0.1"}
 
 
 class NotFound(LookupError):

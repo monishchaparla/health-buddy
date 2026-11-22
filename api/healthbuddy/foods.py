@@ -22,7 +22,7 @@ def norm(s: str) -> str:
 @lru_cache(maxsize=1)
 def _load():
     if not FOODS_JSON.exists():
-        raise RuntimeError("data/foods.json is missing. Run: python -m teju.foods_build")
+        raise RuntimeError("data/foods.json is missing. Run: python -m healthbuddy.foods_build")
     foods = json.loads(FOODS_JSON.read_text(encoding="utf-8"))
     by_id = {f["id"]: f for f in foods}
     names: dict[str, str] = {}  # normalised name -> food id; curated foods come first in foods.json so they win

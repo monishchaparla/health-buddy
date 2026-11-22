@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from teju import coach, foods, parse
+from healthbuddy import coach, foods, parse
 
 
 def ids(items):

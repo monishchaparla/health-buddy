@@ -5,8 +5,8 @@ data/raw/ (git-ignored) and writes data/foods.json (git-ignored). USDA SR Legacy
 domain (CC0), so the small extract data/usda_basics.csv is committed; rebuild it with --usda
 after downloading the SR Legacy CSV zip into data/raw/.
 
-python -m teju.foods_build          # build foods.json (downloads INDB if missing)
-python -m teju.foods_build --usda   # rebuild data/usda_basics.csv from SR Legacy
+python -m healthbuddy.foods_build          # build foods.json (downloads INDB if missing)
+python -m healthbuddy.foods_build --usda   # rebuild data/usda_basics.csv from SR Legacy
 """
 
 from __future__ import annotations

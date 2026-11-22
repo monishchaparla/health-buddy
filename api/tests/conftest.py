@@ -4,23 +4,23 @@ import pytest
 
 # Tests never call Gemini: an empty key wins over api/.env (load_dotenv doesn't override), so parsing uses rules.
 os.environ["GEMINI_API_KEY"] = ""
-os.environ["TEJU_COOKIE_INSECURE"] = "1"  # TestClient talks plain http
+os.environ["HEALTHBUDDY_COOKIE_INSECURE"] = "1"  # TestClient talks plain http
 
 
 @pytest.fixture(autouse=True, scope="session")
 def foods_db():
-    from teju import foods, foods_build
+    from healthbuddy import foods, foods_build
     if not foods.FOODS_JSON.exists():
         foods_build.build()
 
 
 @pytest.fixture
 def client(tmp_path, monkeypatch):
-    monkeypatch.setenv("TEJU_DB", str(tmp_path / "test.db"))
+    monkeypatch.setenv("HEALTHBUDDY_DB", str(tmp_path / "test.db"))
     from fastapi.testclient import TestClient
 
-    from teju import auth
-    from teju.api import app
+    from healthbuddy import auth
+    from healthbuddy.api import app
     auth._failures.clear()
     with TestClient(app) as c:
         yield c

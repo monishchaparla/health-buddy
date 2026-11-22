@@ -2,7 +2,7 @@ from datetime import date
 
 import pytest
 
-from teju import foods, nutrition
+from healthbuddy import foods, nutrition
 
 TODAY = date(2026, 11, 21)
 

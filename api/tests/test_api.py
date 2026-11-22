@@ -20,7 +20,7 @@ def test_session_cookie_is_http_only_and_password_is_hashed(client):
     r = signup(client)
     cookie = r.headers["set-cookie"].lower()
     assert "httponly" in cookie and "samesite=lax" in cookie
-    from teju import db
+    from healthbuddy import db
     with db.connect() as conn:
         h = conn.execute("SELECT pw_hash FROM users").fetchone()[0]
     assert h.startswith("$argon2") and "correct-horse-1" not in h
@@ -91,7 +91,7 @@ def test_meal_nutrients_are_recomputed_server_side(client):
     body = {"member_id": mid, "eaten_on": TODAY, "slot": "breakfast", "source": "search",
             "items": [{"food_id": "idli", "quantity": 2, "unit": ""}, {"food_id": "sambar", "quantity": 1, "unit": "", "grams": 100}]}
     assert client.post("/meals", json=body).status_code == 201
-    from teju import foods, nutrition
+    from healthbuddy import foods, nutrition
     idli, sambar = foods.get("idli"), foods.get("sambar")
     expected = nutrition.nutrients(idli["per100"], round(2 * idli["unit_g"], 1))["kcal"] + nutrition.nutrients(sambar["per100"], 100)["kcal"]
     day = client.get(f"/members/{mid}/day").json()
@@ -157,7 +157,7 @@ def test_export_and_delete_account(client):
     assert len(data["health_records"]) == 1 and "pw_hash" not in str(data)
     assert client.request("DELETE", "/me", json={"password": "wrong"}).status_code == 401
     assert client.request("DELETE", "/me", json={"password": "correct-horse-1"}).status_code == 200
-    from teju import db
+    from healthbuddy import db
     with db.connect() as conn:
         assert conn.execute("SELECT COUNT(*) FROM health_records").fetchone()[0] == 0
         assert conn.execute("SELECT COUNT(*) FROM members").fetchone()[0] == 0
@@ -169,3 +169,62 @@ def test_coach_without_ai_uses_rule_templates_and_child_caution(client):
                                           "height_cm": 125, "weight_kg": 24, "parental_consent": True}).json()
     out = client.get(f"/members/{child['id']}/coach").json()
     assert out["engine"] == "rules" and "child" in out["cautions"] and out["suggestions"]
+
+
+# ---------- coach: audit fixes ----------
+
+def _adult(client):
+    mid = self_id(client)
+    client.put(f"/members/{mid}", json={"name": "Asha", "relation": "self", "sex": "female", "dob": "1990-01-01",
+                                        "height_cm": 160, "weight_kg": 60})
+    return mid
+
+
+def _log(client, mid, day, slot, food="idli", qty=1):
+    r = client.post("/meals", json={"member_id": mid, "eaten_on": day.isoformat(), "slot": slot, "source": "search",
+                                    "items": [{"food_id": food, "quantity": qty}]})
+    assert r.status_code == 201
+
+
+def test_breakfast_only_days_do_not_trigger_eating_too_little(client):
+    from datetime import timedelta
+    signup(client)
+    mid = _adult(client)
+    for d in range(1, 5):
+        _log(client, mid, date.today() - timedelta(days=d), "breakfast")
+    out = client.get(f"/members/{mid}/coach").json()
+    assert out["stats"]["days_logged"] == 0
+    assert "below_floor" not in out["flags"] and "see_doctor" not in out["cautions"]
+
+
+def test_week_leaves_out_today(client):
+    signup(client)
+    mid = _adult(client)
+    for slot in ("breakfast", "lunch", "dinner"):
+        _log(client, mid, date.today(), slot)
+    out = client.get(f"/members/{mid}/coach").json()
+    assert out["stats"]["days_logged"] == 0 and out["stats"]["to"] < date.today().isoformat()
+
+
+def test_cached_ai_advice_is_dropped_when_numbers_change(client, monkeypatch):
+    from datetime import timedelta
+
+    from healthbuddy import coach, gemini
+    calls = []
+
+    def fake_generate(contents, schema):
+        calls.append(1)
+        return coach.CoachOut(suggestions=[coach.Suggestion(title="Add dal", body="A katori of dal with lunch.")]), "fake"
+
+    monkeypatch.setattr(gemini, "generate", fake_generate)
+    signup(client)
+    mid = _adult(client)
+    for d in range(1, 4):
+        for slot in ("breakfast", "lunch", "dinner"):
+            _log(client, mid, date.today() - timedelta(days=d), slot)
+    assert client.get(f"/members/{mid}/coach").json()["engine"] == "gemini"
+    client.get(f"/members/{mid}/coach")
+    assert len(calls) == 1  # second view served from cache
+    _log(client, mid, date.today() - timedelta(days=1), "snack", "banana")
+    client.get(f"/members/{mid}/coach")
+    assert len(calls) == 2  # new meal changed the stats, so the cache was not reused

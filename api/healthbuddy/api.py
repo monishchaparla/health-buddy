@@ -1,4 +1,4 @@
-"""HTTP API. Run: uvicorn teju.api:app --reload --port 8000"""
+"""HTTP API. Run: uvicorn healthbuddy.api:app --reload --port 8000"""
 
 from __future__ import annotations
 
@@ -12,9 +12,9 @@ import httpx
 from fastapi import Depends, FastAPI, File, HTTPException, Request, Response, UploadFile
 from pydantic import BaseModel, EmailStr, Field, model_validator
 
-from teju import auth, coach, db, foods, gemini, nutrition, off, parse
-from teju.auth import current_user
-from teju.db import get_conn
+from healthbuddy import auth, coach, db, foods, gemini, nutrition, off, parse
+from healthbuddy.auth import current_user
+from healthbuddy.db import get_conn
 
 
 @asynccontextmanager
@@ -23,7 +23,7 @@ async def lifespan(_app: FastAPI):
     yield
 
 
-app = FastAPI(title="Teju Health AI", lifespan=lifespan)
+app = FastAPI(title="Health Buddy", lifespan=lifespan)
 
 Lang = Literal["en", "te"]
 Relation = Literal["self", "spouse", "child", "parent", "grandparent", "sibling", "other"]
@@ -457,7 +457,7 @@ def export(user=Depends(current_user), conn: sqlite3.Connection = Depends(get_co
         "health_records": rows("SELECT * FROM health_records WHERE user_id = ?"),
     }
     return Response(json.dumps(data, ensure_ascii=False, indent=2), media_type="application/json",
-                    headers={"Content-Disposition": 'attachment; filename="teju-export.json"'})
+                    headers={"Content-Disposition": 'attachment; filename="health-buddy-export.json"'})
 
 
 @app.delete("/me")

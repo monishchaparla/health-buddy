@@ -1,5 +1,5 @@
 [project]
-name = "teju"
+name = "healthbuddy"
 version = "0.1.0"
 description = "Indian family nutrition coach API"
 requires-python = ">=3.11"

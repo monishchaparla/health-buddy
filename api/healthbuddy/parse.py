@@ -11,7 +11,7 @@ from functools import lru_cache
 
 from pydantic import BaseModel, Field
 
-from teju import foods, gemini, nutrition
+from healthbuddy import foods, gemini, nutrition
 
 UNITS = ["piece", "serving", "bowl", "katori", "plate", "cup", "glass", "tbsp", "tsp", "slice", "handful", "g", "ml"]
 

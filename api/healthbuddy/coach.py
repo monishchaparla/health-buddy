@@ -13,7 +13,7 @@ from datetime import date, timedelta
 
 from pydantic import BaseModel, Field
 
-from teju import gemini, nutrition
+from healthbuddy import gemini, nutrition
 
 BANNED = re.compile(
     r"medic|tablet|pill|capsule|dose|dosage|insulin|metformin|statin|supplement|diagnos|disease|disorder|"
@@ -66,18 +66,21 @@ TEMPLATES = {
 
 
 def weekly_stats(conn: sqlite3.Connection, member: dict, end: date) -> dict:
-    start = end - timedelta(days=6)
+    """The 7 days before `end`. `end` itself is left out because that day is still in progress."""
+    start, last = end - timedelta(days=7), end - timedelta(days=1)
+    # Only days with 3+ meal slots logged count, so a breakfast-only day isn't read as "ate 400 kcal".
     days = conn.execute(
         """SELECT m.eaten_on, SUM(i.kcal) kcal, SUM(i.protein) protein, SUM(i.fibre) fibre
            FROM meals m JOIN meal_items i ON i.meal_id = m.id
-           WHERE m.member_id = ? AND m.eaten_on BETWEEN ? AND ? GROUP BY m.eaten_on""",
-        (member["id"], start.isoformat(), end.isoformat()),
+           WHERE m.member_id = ? AND m.eaten_on BETWEEN ? AND ? GROUP BY m.eaten_on
+           HAVING COUNT(DISTINCT m.slot) >= 3""",
+        (member["id"], start.isoformat(), last.isoformat()),
     ).fetchall()
     top = conn.execute(
         # Packaged-food names come from Open Food Facts (third-party text), so they never reach the prompt.
         """SELECT CASE WHEN i.food_id LIKE 'off:%' THEN 'packaged food' ELSE i.name END name, COUNT(*) n FROM meals m JOIN meal_items i ON i.meal_id = m.id
            WHERE m.member_id = ? AND m.eaten_on BETWEEN ? AND ? GROUP BY 1 ORDER BY n DESC LIMIT 6""",
-        (member["id"], start.isoformat(), end.isoformat()),
+        (member["id"], start.isoformat(), last.isoformat()),
     ).fetchall()
     health = {r["type"]: r["v"] for r in conn.execute(
         """SELECT type, AVG(daily) v FROM (
@@ -85,12 +88,12 @@ def weekly_stats(conn: sqlite3.Connection, member: dict, end: date) -> dict:
              FROM health_records WHERE member_id = ? AND type IN ('steps', 'sleep')
                AND substr(CASE WHEN type = 'sleep' THEN end_time ELSE start_time END, 1, 10) BETWEEN ? AND ?
              GROUP BY type, d) GROUP BY type""",
-        (member["id"], start.isoformat(), end.isoformat()),
+        (member["id"], start.isoformat(), last.isoformat()),
     ).fetchall()}
     n = len(days)
     avg = lambda k: round(sum(d[k] for d in days) / n, 1) if n else None  # noqa: E731
     return {
-        "from": start.isoformat(), "to": end.isoformat(), "days_logged": n,
+        "from": start.isoformat(), "to": last.isoformat(), "days_logged": n,
         "avg_kcal": avg("kcal"), "avg_protein_g": avg("protein"), "avg_fibre_g": avg("fibre"),
         "avg_steps": round(health["steps"]) if health.get("steps") else None,
         "avg_sleep_h": round(health["sleep"] / 60, 1) if health.get("sleep") else None,
@@ -158,8 +161,9 @@ def coach(conn: sqlite3.Connection, member: dict, end: date, lang: str, refresh:
     if not refresh:
         row = conn.execute("SELECT payload FROM coach_cache WHERE member_id = ? AND week_end = ? AND lang = ?",
                            (member["id"], end.isoformat(), lang)).fetchone()
-        if row:
-            return {**base, **json.loads(row["payload"])}
+        cached = json.loads(row["payload"]) if row else None
+        if cached and cached.get("stats") == stats:  # stale once a meal or health record changes the numbers
+            return {**base, **cached}
     engine, model, notice = "rules", None, None
     suggestions = rule_suggestions(stats, f, lang)
     if stats["days_logged"] >= 3:
@@ -181,5 +185,5 @@ def coach(conn: sqlite3.Connection, member: dict, end: date, lang: str, refresh:
     payload = {"engine": engine, "model": model, "suggestions": suggestions}
     if engine == "gemini":  # cache only model output; rules are free to recompute
         conn.execute("INSERT OR REPLACE INTO coach_cache (member_id, week_end, lang, payload) VALUES (?, ?, ?, ?)",
-                     (member["id"], end.isoformat(), lang, json.dumps(payload, ensure_ascii=False)))
+                     (member["id"], end.isoformat(), lang, json.dumps({**payload, "stats": stats}, ensure_ascii=False)))
     return {**base, **payload, "notice": notice}

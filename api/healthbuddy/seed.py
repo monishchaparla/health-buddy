@@ -3,7 +3,7 @@
 All values are synthetic and stored with source 'seed', so the UI labels them as sample data.
 Health data goes through the same upsert as POST /sync/health-connect.
 
-python -m teju.seed            # creates or resets the demo account
+python -m healthbuddy.seed            # creates or resets the demo account
 Demo login: DEMO_EMAIL / DEMO_PASSWORD from the environment, defaults below (local dev only).
 """
 
@@ -13,11 +13,11 @@ import os
 import random
 from datetime import date, datetime, timedelta, timezone
 
-from teju import auth, db, foods, nutrition
-from teju.api import HealthRecordIn, SyncIn, upsert_health
+from healthbuddy import auth, db, foods, nutrition
+from healthbuddy.api import HealthRecordIn, SyncIn, upsert_health
 
 DEMO_EMAIL = os.environ.get("DEMO_EMAIL", "demo@example.com")
-DEMO_PASSWORD = os.environ.get("DEMO_PASSWORD", "teju-demo-2026")
+DEMO_PASSWORD = os.environ.get("DEMO_PASSWORD", "buddy-demo-2026")
 IST = timezone(timedelta(hours=5, minutes=30))
 
 FAMILY = [
