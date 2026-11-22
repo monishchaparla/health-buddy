@@ -116,7 +116,7 @@ Results are written to `api/evals/results_<engine>.json`, with every miss listed
 - Passwords are hashed with argon2id. Sessions are opaque random tokens stored only as SHA-256 hashes,
   in an HTTP-only, SameSite=Lax, Secure cookie (the Android companion gets a bearer token instead).
 - Failed sign-ins are limited per email and IP (5 in 15 minutes), plus a looser per-email cap (20)
-  that doesn't apply to IPs that have signed in to that account before. In production, run uvicorn
+  that doesn't apply to IPs that have signed in to that account before, and a hard ceiling of 100 that applies to everyone. In production, run uvicorn
   behind one trusted proxy with `--forwarded-allow-ips` set to it so client IPs are real.
 - India's DPDP Act 2023: a consent screen at sign-up, parental consent for children, JSON export of
   everything stored, and account deletion that cascades to all family data.

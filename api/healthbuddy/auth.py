@@ -24,7 +24,7 @@ _DUMMY_HASH = _ph.hash("timing-equaliser")
 # comes from X-Forwarded-For, which a client can rotate, so a looser per-email cap backs it up.
 _failures: dict[str, list[float]] = {}
 _known_ips: dict[str, set[str]] = {}  # IPs that signed in to this email before skip the per-email cap
-MAX_FAILURES, MAX_PER_EMAIL, WINDOW_S = 5, 20, 15 * 60
+MAX_FAILURES, MAX_PER_EMAIL, MAX_HARD, WINDOW_S = 5, 20, 100, 15 * 60  # MAX_HARD applies to every IP
 
 
 def hash_password(pw: str) -> str:
@@ -49,7 +49,7 @@ def _recent(key: str) -> int:
 
 
 def throttled(email: str, ip: str) -> bool:
-    if _recent(f"{email}|{ip}") >= MAX_FAILURES:
+    if _recent(f"{email}|{ip}") >= MAX_FAILURES or _recent(email) >= MAX_HARD:
         return True
     return ip not in _known_ips.get(email, set()) and _recent(email) >= MAX_PER_EMAIL
 
