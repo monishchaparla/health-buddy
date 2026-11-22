@@ -20,9 +20,10 @@ SESSION_DAYS = 30
 _ph = PasswordHasher()
 _DUMMY_HASH = _ph.hash("timing-equaliser")
 # shortcut: in-memory throttle keyed on (email, client IP), per process; move to Redis/DB for multi-instance.
-# Keying on IP too means an attacker elsewhere can't lock a real user out of their own account.
+# Keying on IP too means an attacker elsewhere can't lock a real user out of their own account. The client IP
+# comes from X-Forwarded-For, which a client can rotate, so a looser per-email cap backs it up.
 _failures: dict[str, list[float]] = {}
-MAX_FAILURES, WINDOW_S = 5, 15 * 60
+MAX_FAILURES, MAX_PER_EMAIL, WINDOW_S = 5, 20, 15 * 60
 
 
 def hash_password(pw: str) -> str:
@@ -40,19 +41,23 @@ def _digest(token: str) -> str:
     return hashlib.sha256(token.encode()).hexdigest()
 
 
-def throttled(email: str) -> bool:
+def _recent(key: str) -> int:
     now = time.time()
-    recent = [t for t in _failures.get(email, []) if now - t < WINDOW_S]
-    _failures[email] = recent
-    return len(recent) >= MAX_FAILURES
+    _failures[key] = [t for t in _failures.get(key, []) if now - t < WINDOW_S]
+    return len(_failures[key])
 
 
-def record_failure(email: str) -> None:
-    _failures.setdefault(email, []).append(time.time())
+def throttled(email: str, ip: str) -> bool:
+    return _recent(f"{email}|{ip}") >= MAX_FAILURES or _recent(email) >= MAX_PER_EMAIL
 
 
-def clear_failures(email: str) -> None:
-    _failures.pop(email, None)
+def record_failure(email: str, ip: str) -> None:
+    for key in (f"{email}|{ip}", email):
+        _failures.setdefault(key, []).append(time.time())
+
+
+def clear_failures(email: str, ip: str) -> None:
+    _failures.pop(f"{email}|{ip}", None)
 
 
 def create_session(conn: sqlite3.Connection, user_id: int, kind: str = "web") -> str:

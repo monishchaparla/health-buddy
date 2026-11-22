@@ -213,14 +213,14 @@ def signup(body: SignupIn, response: Response, conn: sqlite3.Connection = Depend
 
 def _check_login(conn: sqlite3.Connection, body: LoginIn, request: Request) -> sqlite3.Row:
     email = body.email.lower()
-    key = f"{email}|{request.client.host if request.client else '-'}"
-    if auth.throttled(key):
+    ip = request.client.host if request.client else "-"
+    if auth.throttled(email, ip):
         raise HTTPException(429, "Too many failed attempts. Wait 15 minutes and try again.")
     user = conn.execute("SELECT * FROM users WHERE email = ?", (email,)).fetchone()
     if not auth.verify_password(user["pw_hash"] if user else None, body.password):
-        auth.record_failure(key)
+        auth.record_failure(email, ip)
         raise HTTPException(401, "Email or password is wrong.")
-    auth.clear_failures(key)
+    auth.clear_failures(email, ip)
     return user
 
 

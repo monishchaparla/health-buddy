@@ -228,3 +228,14 @@ def test_cached_ai_advice_is_dropped_when_numbers_change(client, monkeypatch):
     _log(client, mid, date.today() - timedelta(days=1), "snack", "banana")
     client.get(f"/members/{mid}/coach")
     assert len(calls) == 2  # new meal changed the stats, so the cache was not reused
+
+
+def test_rotating_ips_still_hit_the_per_email_cap():
+    from healthbuddy import auth
+    auth._failures.clear()
+    for i in range(19):
+        auth.record_failure("asha@example.com", f"198.51.100.{i}")
+    assert not auth.throttled("asha@example.com", "203.0.113.99")  # each IP below 5, email below 20
+    auth.record_failure("asha@example.com", "198.51.100.200")
+    assert auth.throttled("asha@example.com", "203.0.113.99")  # 20 failures across IPs blocks new IPs too
+    auth._failures.clear()

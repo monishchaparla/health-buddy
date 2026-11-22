@@ -1,0 +1,104 @@
+{
+ "engine": "rules",
+ "basic": {
+  "meals_scored": 60,
+  "meals_total": 60,
+  "item_precision": 0.984,
+  "item_recall": 0.984,
+  "portion_within_10pct": 0.968,
+  "kcal_mape": 0.03,
+  "kcal_median_ape": 0.0,
+  "kcal_mape_by_lang": {
+   "en": 0.001,
+   "rom": 0.0,
+   "te": 0.088
+  },
+  "misses": [
+   {
+    "id": "te06",
+    "text": "రెండు దోశలు, కొబ్బరి చట్నీ",
+    "expected": {
+     "plain_dosa": 1,
+     "coconut_chutney": 1
+    },
+    "got": {
+     "coconut_chutney": 1
+    },
+    "unmatched": [
+     "దోశలు"
+    ],
+    "kcal_error": 0.803
+   },
+   {
+    "id": "te19",
+    "text": "నాలుగు పూరీలు, ఆలూ కూర",
+    "expected": {
+     "poori": 1,
+     "aloo_curry": 1
+    },
+    "got": {
+     "aloo_curry": 1
+    },
+    "unmatched": [
+     "పూరీలు"
+    ],
+    "kcal_error": 0.953
+   }
+  ]
+ },
+ "hard": {
+  "meals_scored": 24,
+  "meals_total": 24,
+  "item_precision": 0.894,
+  "item_recall": 0.933,
+  "portion_within_10pct": 0.889,
+  "kcal_mape": 0.111,
+  "kcal_median_ape": 0.0,
+  "kcal_mape_by_lang": {
+   "en": 0.018,
+   "rom": 0.188,
+   "te": 0.193
+  },
+  "misses": [
+   {
+    "id": "h12",
+    "text": "nenu rendu idlilu tinnanu",
+    "expected": {
+     "idli": 1
+    },
+    "got": {},
+    "unmatched": [
+     "nenu rendu idlilu tinnanu"
+    ],
+    "kcal_error": 1.0
+   },
+   {
+    "id": "h14",
+    "text": "rathri rendu chapatilu, kodi kura",
+    "expected": {
+     "chapati": 1,
+     "chicken_curry": 1
+    },
+    "got": {
+     "chicken_curry": 1
+    },
+    "unmatched": [
+     "rathri rendu chapatilu"
+    ],
+    "kcal_error": 0.313
+   },
+   {
+    "id": "h19",
+    "text": "నేను రెండు దోసెలు తిన్నాను",
+    "expected": {
+     "plain_dosa": 1
+    },
+    "got": {},
+    "unmatched": [
+     "నేను రెండు దోసెలు తిన్నాను"
+    ],
+    "kcal_error": 1.0
+   }
+  ]
+ }
+}
